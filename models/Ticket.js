@@ -32,7 +32,28 @@ const ticketSchema = new mongoose.Schema({
     assignedTo: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+
+    raiserName: {
+        type: String,
+        required: true
+    },
+      
+    raiserEmail: {
+        type: String,
+        required: true
+    },
+      
+    raiserPhone: {
+        type: String,
+        required: true
+    },
+
+    ticketNumber: {
+        type: String,
+        unique: true
+    },
+
 },{
     timestamps: true
 })

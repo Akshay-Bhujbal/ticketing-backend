@@ -1,15 +1,22 @@
 const Ticket = require('../models/Ticket');
 
 exports.createTicket = async (req, res) => {
-    const {title, description, priority, assignedTo} = req.body;
+    const {title, description, priority, raiserName, raiserPhone, raiserEmail, assignedTo} = req.body;
 
     try {
+        const count = await Ticket.countDocuments();
+        const ticketNumber = `2025-${(count + 1).toString().padStart(5, '0')}`;
+
         const ticket = await Ticket.create({
             title,
             description,
             priority,
+            raiserName,
+            raiserEmail,
+            raiserPhone,
             assignedTo,
-            createdBy:  req.user._id
+            createdBy:  req.user._id,
+            ticketNumber
         });
 
         res.status(201).json(ticket);
@@ -46,8 +53,8 @@ exports.getAllTickets = async (req, res) => {
 exports.getTicketById = async (req, res) => {
     try {
         const ticket = await Ticket.findById(req.params.id)
-            .populate('createdBy', 'firstname lastname email')
-            .populate('assignedTo', 'firstname lastname email')
+            .populate('createdBy', 'firstName lastName email')
+            .populate('assignedTo', 'firstName lastName email')
 
         if (!ticket) return res.status(404).json({message: 'Ticket not found'});
 
@@ -69,8 +76,8 @@ exports.updateTicketStatus = async (req, res) => {
             {status},
             {new: true}
         )
-        .populate('createdBy', 'firstname lastname email')
-        .populate('assignedTo', 'firstname lastname email')
+        .populate('createdBy', 'firstName lastName email')
+        .populate('assignedTo', 'firstName lastName email')
         if (!ticket) return res.status(404).json({message: 'Ticket not found'});
         res.json(ticket);
     } catch (err) {
